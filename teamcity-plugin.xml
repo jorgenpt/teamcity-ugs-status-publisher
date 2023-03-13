@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-plugin-v1-xml">
+  <info>
+    <name>UGSStatusPublisher</name>
+    <display-name>Unreal Game Sync Status Publisher</display-name>
+    <version>@Version@</version>
+    <description>Publish build status to Unreal Game Sync (UGS)</description>
+    <download-url>Plugin download URL</download-url>
+    <email>jorgen@tjer.no</email>
+    <vendor>
+      <name>Jørgen Tjernø</name>
+      <url>https://github.com/jorgenpt/ugs-status-publisher</url>
+    </vendor>
+  </info>
+  <deployment use-separate-classloader="true" allow-runtime-reload="true"/>
+  <dependencies>
+    <plugin name="commit-status-publisher"/>
+  </dependencies>
+</teamcity-plugin>
