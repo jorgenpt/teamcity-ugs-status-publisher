@@ -4,7 +4,7 @@
   <parent>
     <artifactId>ugsStatusPublisher</artifactId>
     <groupId>no.tjer.teamcity.ugsStatusPublisher</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
@@ -18,7 +18,7 @@
       <dependency>
            <groupId>no.tjer.teamcity.ugsStatusPublisher</groupId>
            <artifactId>ugsStatusPublisher-server</artifactId>
-           <version>1.0-SNAPSHOT</version>
+           <version>1.0</version>
       </dependency>
   </dependencies>
   <build>

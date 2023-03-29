@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ugsStatusPublisher</artifactId>
         <groupId>no.tjer.teamcity.ugsStatusPublisher</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <artifactId>ugsStatusPublisher-server</artifactId>
     <packaging>jar</packaging>
