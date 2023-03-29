@@ -26,8 +26,6 @@ jobs:
         run: |
           version="$(echo '${{ github.ref_name }}' | sed 's/^v//')"
           mvn -B package "-Dteamcity.ugsStatusPublisher.plugin.version=$version"
-      - run: mkdir staging && cp target/*.zip staging
       - uses: actions/upload-artifact@v3
         with:
-          name: Package
-          path: staging
+          path: target/ugsStatusPublisher.zip
