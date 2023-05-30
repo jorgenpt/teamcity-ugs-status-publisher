@@ -8,6 +8,8 @@
     <packaging>pom</packaging>
     <properties>
         <teamcity-version>2023.05</teamcity-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <repositories>
         <repository>
