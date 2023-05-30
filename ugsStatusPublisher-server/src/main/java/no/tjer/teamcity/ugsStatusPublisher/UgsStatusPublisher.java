@@ -194,7 +194,7 @@ class UgsStatusPublisher extends HttpBasedCommitStatusPublisher<UgsStatusPublish
     private CommitStatus getCommitStatus(final SBuild build, final boolean isStarting) {
         BuildPromotion buildPromotion = build.getBuildPromotion();
         boolean isCanceled = buildPromotion.isCanceled() || build.isInternalError();
-        LOG.warn(String.format("UGS %s: isStarting: %s isCanceled: %s isISE: %s Status: %s", build.getBuildTypeId(), isStarting, buildPromotion.isCanceled(), build.isInternalError(), build.getBuildStatus()));
+        LOG.warn(String.format("UGS %s: isStarting: %s isCanceled: %s isISE: %s Status: %s", build.getFullName(), isStarting, buildPromotion.isCanceled(), build.isInternalError(), build.getBuildStatus()));
         BadgeResult badge = getBadge(isStarting, isCanceled, build.getBuildStatus());
         return new CommitStatus(badge, getViewUrl(build));
     }
