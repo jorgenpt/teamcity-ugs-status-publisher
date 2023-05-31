@@ -1,0 +1,62 @@
+/*
+ * This is a general purpose Gradle build.
+ * Learn more about Gradle by exploring our samples at https://docs.gradle.org/8.1.1/samples
+ */
+
+ext {
+    pluginVersion = project.hasProperty("PluginVersion") ? "$PluginVersion"
+            : "SNAPSHOT"
+    teamcityVersion = "2022.10"
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    group = 'no.tjer.teamcity'
+    version = "$rootProject.ext.pluginVersion"
+
+    clean {
+        delete "target"
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        maven {
+            url = 'https://download.jetbrains.com/teamcity-repository'
+        }
+
+        maven {
+            url = 'https://repo.maven.apache.org/maven2'
+        }
+        mavenLocal()
+    }
+
+    sourceCompatibility = '1.8'
+}
+
+
+task copyPluginFiles(type: Copy, dependsOn: ':ugs-status-publisher-server:jar') {
+    from '.'
+    include 'teamcity-plugin.xml'
+    into './build/plugin-files'
+    expand(PluginVersion: "$rootProject.ext.pluginVersion")
+}
+
+task zipPlugin(type: Zip, dependsOn: ['copyPluginFiles']) {
+    destinationDirectory = new File(rootDir, './target')
+    into('server') {
+        var serverConfigurations = project(':ugs-status-publisher-server').configurations
+        from serverConfigurations.runtimeClasspath
+        include '*'
+    }
+
+    from './build/plugin-files'
+    include 'teamcity-plugin.xml'
+
+    archiveFileName = 'ugs-status-publisher.zip'
+}
+
+build.dependsOn zipPlugin

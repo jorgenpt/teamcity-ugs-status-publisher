@@ -19,7 +19,6 @@ package no.tjer.teamcity.ugsStatusPublisher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
 import java.security.KeyStore;

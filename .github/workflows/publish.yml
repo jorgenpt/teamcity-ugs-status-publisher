@@ -21,11 +21,11 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-          cache: 'maven'
-      - name: Build with Maven
+          cache: 'gradle'
+      - name: Build with Gradle
         run: |
           version="$(echo '${{ github.ref_name }}' | sed 's/^v//')"
-          mvn -B package "-Dteamcity.ugsStatusPublisher.plugin.version=$version"
+          ./gradlew "-PPluginVersion=$version"
       - uses: actions/upload-artifact@v3
         with:
           path: target/ugsStatusPublisher.zip

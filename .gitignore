@@ -1,3 +1,7 @@
-target/
+target
+.idea
 *.iml
-pom.xml.versionsBackup
+!modules/*.iml
+.gradle
+/build/
+/ugs-status-publisher-server/build/

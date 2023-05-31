@@ -1,13 +1,3 @@
 # Default ignored files
-/libraries/
 /shelf/
 /workspace.xml
-/artifacts
-/compiler.xml
-/jarRepositories.xml
-/modules.xml
-/*.iml
-/modules
-/uiDesigner.xml
-/vcs.xml
-/misc.xml
