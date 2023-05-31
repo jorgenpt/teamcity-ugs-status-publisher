@@ -19,7 +19,6 @@ package no.tjer.teamcity.ugsStatusPublisher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
 import java.security.KeyStore;
@@ -27,7 +26,6 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import jetbrains.buildServer.vcshostings.http.HttpHelper;
-import jetbrains.buildServer.vcshostings.http.HttpResponseProcessor;
 import jetbrains.buildServer.commitPublisher.*;
 import jetbrains.buildServer.log.LogUtil;
 import jetbrains.buildServer.messages.Status;
