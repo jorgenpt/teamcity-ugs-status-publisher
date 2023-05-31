@@ -40,7 +40,7 @@ import static jetbrains.buildServer.commitPublisher.LoggerUtil.LOG;
 
 
 /**
- * Updates TFS Git commit statuses via REST API.
+ * Updates Unreal Game Sync commit statuses via REST API.
  */
 class UgsStatusPublisher extends HttpBasedCommitStatusPublisher<UgsStatusPublisher.BadgeResult> {
 
