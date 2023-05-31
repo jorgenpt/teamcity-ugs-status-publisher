@@ -19,16 +19,21 @@ package no.tjer.teamcity.ugsStatusPublisher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 import java.util.*;
 
+import jetbrains.buildServer.vcshostings.http.HttpHelper;
+import jetbrains.buildServer.vcshostings.http.HttpResponseProcessor;
 import jetbrains.buildServer.commitPublisher.*;
 import jetbrains.buildServer.log.LogUtil;
 import jetbrains.buildServer.messages.Status;
 import jetbrains.buildServer.serverSide.*;
+import jetbrains.buildServer.vcshostings.http.credentials.HttpCredentials;
+import jetbrains.buildServer.vcshostings.http.credentials.UsernamePasswordCredentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -117,7 +122,7 @@ class UgsStatusPublisher extends HttpBasedCommitStatusPublisher<UgsStatusPublish
         String url = MessageFormat.format(METRICS_URL_FORMAT, serverUrl);
         try {
             IOGuard.allowNetworkCall(() -> {
-                HttpHelper.get(url, getUserName(params), getPassword(params), Collections.singletonMap("Accept", "application/json"), BaseCommitStatusPublisher.DEFAULT_CONNECTION_TIMEOUT,
+                HttpHelper.get(url, getCredentials(params), Collections.singletonMap("Accept", "application/json"), BaseCommitStatusPublisher.DEFAULT_CONNECTION_TIMEOUT,
                         trustStore, new DefaultHttpResponseProcessor() {
                             @Override
                             public void processResponse(HttpHelper.HttpResponse response) throws HttpPublisherException, IOException {
@@ -182,7 +187,7 @@ class UgsStatusPublisher extends HttpBasedCommitStatusPublisher<UgsStatusPublish
         body.put("Result", status.result.getUGSValue());
         body.put("Url", status.targetUrl);
 
-        postJson(commitStatusUrl, getUserName(myParams), getPassword(myParams),
+        postJson(commitStatusUrl, getCredentials(myParams),
                 body.toString(),
                 Collections.singletonMap("Accept", "application/json"),
                 description
@@ -215,15 +220,14 @@ class UgsStatusPublisher extends HttpBasedCommitStatusPublisher<UgsStatusPublish
     }
 
     @Nullable
-    private static String getUserName(Map<String, String> params) {
+    private static HttpCredentials getCredentials(Map<String, String> params) {
         final String user = params.get(UgsConstants.AUTH_USER);
         final String password = params.get(UgsConstants.AUTH_PASSWORD);
-        return password != null ? user : null;
-    }
-
-    @Nullable
-    private static String getPassword(Map<String, String> params) {
-        return params.get(UgsConstants.AUTH_PASSWORD);
+        if (user != null && password != null) {
+            return new UsernamePasswordCredentials(user, password);
+        }  else {
+            return null;
+        }
     }
 
     private static class Error {
