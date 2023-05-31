@@ -3,7 +3,7 @@
   <info>
     <name>UGSStatusPublisher</name>
     <display-name>Unreal Game Sync Status Publisher</display-name>
-    <version>@Version@</version>
+    <version>$PluginVersion</version>
     <description>Publish build status to Unreal Game Sync (UGS)</description>
     <download-url>https://github.com/jorgenpt/teamcity-ugs-status-publisher/releases/latest/download/ugsStatusPublisher.zip</download-url>
     <email>jorgen@tjer.no</email>
