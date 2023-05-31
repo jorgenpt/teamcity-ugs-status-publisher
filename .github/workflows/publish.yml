@@ -28,4 +28,4 @@ jobs:
           ./gradlew "-PPluginVersion=$version"
       - uses: actions/upload-artifact@v3
         with:
-          path: target/ugsStatusPublisher.zip
+          path: target/ugs-status-publisher.zip
