@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly files("$rootDir/dependencies/commit-status-publisher-${rootProject.ext.teamcityVersion}.jar")
+    compileOnly files("$rootDir/dependencies/commit-status-publisher-${rootProject.ext.teamcityVersion}.jar", "$rootDir/dependencies/server-${rootProject.ext.teamcityVersion}.jar")
 
     compileOnly "org.jetbrains.teamcity:server-api:$rootProject.ext.teamcityVersion"
     compileOnly "org.jetbrains.teamcity:server-web-api:$rootProject.ext.teamcityVersion"

@@ -6,7 +6,7 @@
 ext {
     pluginVersion = project.hasProperty("PluginVersion") ? "$PluginVersion"
             : "SNAPSHOT"
-    teamcityVersion = "2022.10"
+    teamcityVersion = "2023.05"
 }
 
 allprojects {
