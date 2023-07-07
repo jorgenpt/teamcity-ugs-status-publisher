@@ -21,11 +21,6 @@ dependencies {
     implementation 'org.json:json:20230227'
 }
 
-//jar {
-//    archiveBaseName = "ugs-status-publisher"
-//    version = "$rootProject.ext.pluginVersion"
-//}
-
 teamcity {
     version = teamcityVersion
 
