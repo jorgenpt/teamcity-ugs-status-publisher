@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'java'
     id 'io.github.rodm.teamcity-server' version '1.5'
     id 'io.github.rodm.teamcity-environments' version '1.5'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.0'
 }
 
 group = 'no.tjer.teamcity'
@@ -19,6 +22,7 @@ dependencies {
 
     implementation 'org.apache.httpcomponents:httpclient:4.5.1'
     implementation 'org.json:json:20230227'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 teamcity {
@@ -54,5 +58,21 @@ teamcity {
             serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
             agentOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006'
         }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+compileKotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+    }
+}
+
+compileTestKotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
     }
 }
