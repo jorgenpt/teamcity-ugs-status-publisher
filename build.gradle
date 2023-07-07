@@ -1,62 +1,63 @@
-/*
- * This is a general purpose Gradle build.
- * Learn more about Gradle by exploring our samples at https://docs.gradle.org/8.1.1/samples
- */
+plugins {
+    id 'java'
+    id 'io.github.rodm.teamcity-server' version '1.5'
+    id 'io.github.rodm.teamcity-environments' version '1.5'
+}
+
+group = 'no.tjer.teamcity'
 
 ext {
-    pluginVersion = project.hasProperty("PluginVersion") ? "$PluginVersion"
-            : "SNAPSHOT"
-    teamcityVersion = "2023.05"
+    teamcityVersion = '2023.05'
+
+    downloadsDir = project.findProperty('downloads.dir') ?: "$rootDir/downloads"
+    serversDir = project.findProperty('servers.dir') ?: "$rootDir/servers"
+    java11Home = project.findProperty('java11.home') ?: '/opt/jdk-11.0.2'
 }
 
-allprojects {
-    apply plugin: 'java'
+dependencies {
+    compileOnly files("$rootDir/dependencies/commit-status-publisher-${rootProject.ext.teamcityVersion}.jar", "$rootDir/dependencies/server-${rootProject.ext.teamcityVersion}.jar")
 
-    group = 'no.tjer.teamcity'
-    version = "$rootProject.ext.pluginVersion"
-
-    clean {
-        delete "target"
-    }
+    implementation 'org.apache.httpcomponents:httpclient:4.5.1'
+    implementation 'org.json:json:20230227'
 }
 
-subprojects {
-    apply plugin: 'java'
+//jar {
+//    archiveBaseName = "ugs-status-publisher"
+//    version = "$rootProject.ext.pluginVersion"
+//}
 
-    repositories {
-        maven {
-            url = 'https://download.jetbrains.com/teamcity-repository'
+teamcity {
+    version = teamcityVersion
+
+    server {
+        descriptor {
+            name = project.name
+            displayName = "Unreal Game Sync Status Publisher"
+            version = project.version
+            vendorName = 'Jørgen Tjernø'
+            vendorUrl = 'https://github.com/jorgenpt/teamcity-ugs-status-publisher'
+            description = 'Publish build status to Unreal Game Sync (UGS)'
+            downloadUrl = 'https://github.com/jorgenpt/teamcity-ugs-status-publisher/releases/latest/'
+            email = 'jorgen@tjer.no'
+            useSeparateClassloader = true
+            allowRuntimeReload = true
+
+            dependencies {
+                plugin('commit-status-publisher')
+            }
         }
+    }
 
-        maven {
-            url = 'https://repo.maven.apache.org/maven2'
+    environments {
+        downloadsDir = project.downloadsDir
+        baseHomeDir = project.serversDir
+        baseDataDir = 'data'
+
+        'teamcity2023.05' {
+            version = '2023.05'
+            javaHome = file(java11Home)
+            serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
+            agentOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006'
         }
-        mavenLocal()
     }
-
-    sourceCompatibility = '1.8'
 }
-
-
-task copyPluginFiles(type: Copy, dependsOn: ':ugs-status-publisher-server:jar') {
-    from '.'
-    include 'teamcity-plugin.xml'
-    into './build/plugin-files'
-    expand(PluginVersion: "$rootProject.ext.pluginVersion")
-}
-
-task zipPlugin(type: Zip, dependsOn: ['copyPluginFiles']) {
-    destinationDirectory = new File(rootDir, './target')
-    into('server') {
-        var serverConfigurations = project(':ugs-status-publisher-server').configurations
-        from serverConfigurations.runtimeClasspath
-        include '*'
-    }
-
-    from './build/plugin-files'
-    include 'teamcity-plugin.xml'
-
-    archiveFileName = 'ugs-status-publisher.zip'
-}
-
-build.dependsOn zipPlugin

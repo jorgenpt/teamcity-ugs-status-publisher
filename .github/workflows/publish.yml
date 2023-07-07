@@ -26,7 +26,7 @@ jobs:
       - name: Build with Gradle
         run: |
           version="$(echo '${{ github.ref_name }}' | sed 's/^v//')"
-          ./gradlew "-PPluginVersion=$version" build
+          ./gradlew "-Pversion=$version" serverPlugin
       - uses: actions/upload-artifact@v3
         with:
-          path: target/ugs-status-publisher.zip
+          path: build/distributions/*.zip
