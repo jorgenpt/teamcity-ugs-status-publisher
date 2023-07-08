@@ -31,6 +31,14 @@ import java.security.KeyStore
 import java.text.MessageFormat
 import java.util.*
 
+val BuildPromotion.isCanceledOrFailedToStart: Boolean
+    get() {
+        if (isCanceled) {
+            return true;
+        }
+        return associatedBuild?.isInternalError ?: false
+    }
+
 /**
  * Updates Unreal Game Sync commit statuses via REST API.
  */
@@ -113,17 +121,13 @@ internal class UgsStatusPublisher(
 
     private fun getCommitStatus(build: SBuild, isStarting: Boolean): CommitStatus {
         val buildPromotion = build.buildPromotion
+        // If a dependency has failed, report a failure even if we're canceled
+        val dependencies = buildPromotion.dependencies.map { it.dependOn }
+        if (dependencies.any { !it.isCanceledOrFailedToStart && it.associatedBuild?.buildStatus?.isFailed == true }) {
+            return CommitStatus(BadgeResult.FAILURE, getViewUrl(build))
+        }
+
         val isCanceled = buildPromotion.isCanceled || build.isInternalError
-        LoggerUtil.LOG.warn(
-            String.format(
-                "UGS %s: isStarting: %s isCanceled: %s isISE: %s Status: %s",
-                build.fullName,
-                isStarting,
-                buildPromotion.isCanceled,
-                build.isInternalError,
-                build.buildStatus
-            )
-        )
         val badge = getBadge(isStarting, isCanceled, build.buildStatus)
         return CommitStatus(badge, getViewUrl(build))
     }
@@ -137,7 +141,6 @@ internal class UgsStatusPublisher(
         STARTING("Starting", 0), FAILURE("Failure", 1), WARNING("Warning", 2), SUCCESS("Success", 3), SKIPPED(
             "Skipped", 4
         )
-
     }
 
     companion object {
@@ -205,12 +208,12 @@ internal class UgsStatusPublisher(
             return if (!isStarting) {
                 if (status.isSuccessful) {
                     BadgeResult.SUCCESS
+                } else if (isCanceled) {
+                    BadgeResult.SKIPPED
                 } else if (status == Status.ERROR) {
                     BadgeResult.FAILURE
                 } else if (status == Status.FAILURE) {
                     BadgeResult.FAILURE
-                } else if (isCanceled) {
-                    BadgeResult.SKIPPED
                 } else if (status == Status.WARNING) {
                     BadgeResult.WARNING
                 } else {
