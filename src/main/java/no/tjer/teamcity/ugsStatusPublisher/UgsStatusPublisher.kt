@@ -121,10 +121,12 @@ internal class UgsStatusPublisher(
 
     private fun getCommitStatus(build: SBuild, isStarting: Boolean): CommitStatus {
         val buildPromotion = build.buildPromotion
-        // If a dependency has failed, report a failure even if we're canceled
+        // If a dependency has failed for a composite build, report a failure even if we're canceled
         val dependencies = buildPromotion.dependencies.map { it.dependOn }
-        if (dependencies.any { !it.isCanceledOrFailedToStart && it.associatedBuild?.buildStatus?.isFailed == true }) {
-            return CommitStatus(BadgeResult.FAILURE, getViewUrl(build))
+        if (build.isCompositeBuild) {
+            if (dependencies.any { !it.isCanceledOrFailedToStart && it.associatedBuild?.buildStatus?.isFailed == true }) {
+                return CommitStatus(BadgeResult.FAILURE, getViewUrl(build))
+            }
         }
 
         val isCanceled = buildPromotion.isCanceled || build.isInternalError
