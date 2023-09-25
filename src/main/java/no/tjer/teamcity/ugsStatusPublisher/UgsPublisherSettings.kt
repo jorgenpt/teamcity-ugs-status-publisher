@@ -101,7 +101,7 @@ class UgsPublisherSettings(
     override fun getSupportedEvents(
         buildType: SBuildType, params: Map<String, String>
     ): Set<CommitStatusPublisher.Event> {
-        return if (isBuildQueuedSupported(buildType, params)) mySupportedEventsWithQueued else mySupportedEvents
+        return if (isBuildQueuedSupported(buildType)) mySupportedEventsWithQueued else mySupportedEvents
     }
 
     companion object {
