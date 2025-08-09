@@ -101,7 +101,14 @@ class UgsPublisherSettings(
     override fun getSupportedEvents(
         buildType: SBuildType, params: Map<String, String>
     ): Set<CommitStatusPublisher.Event> {
-        return if (isBuildQueuedSupported(buildType)) mySupportedEventsWithQueued else mySupportedEvents
+        val isBuildQueuedSupportedMember = this::class.members.find { it.name == "isBuildQueuedSupported" }
+        val isBuildQueuedSupportedValue = if (isBuildQueuedSupportedMember!!.parameters.size == 2) {
+            isBuildQueuedSupportedMember.call(this, buildType)
+        } else {
+            isBuildQueuedSupportedMember.call(this, buildType, params)
+        } as Boolean
+
+        return if (isBuildQueuedSupportedValue) mySupportedEventsWithQueued else mySupportedEvents
     }
 
     companion object {

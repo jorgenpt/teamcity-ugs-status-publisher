@@ -31,6 +31,7 @@ import java.security.KeyStore
 import java.text.MessageFormat
 import java.util.*
 
+
 val BuildPromotion.isCanceledOrFailedToStart: Boolean
     get() {
         if (isCanceled) {
@@ -100,11 +101,29 @@ internal class UgsStatusPublisher(
 
     @Throws(PublisherException::class)
     private fun updateBuildStatus(build: SBuild, revision: BuildRevision, isStarting: Boolean) {
+        val serverUrl = myParams[UgsConstants.SERVER_URL]
+        val project = myParams[UgsConstants.PROJECT]
+        val badgeName = myParams[UgsConstants.BADGE_NAME]
+
         val status = getCommitStatus(build, isStarting)
         val description = LogUtil.describe(build)
         val commitStatusUrl = MessageFormat.format(POST_BADGE_URL_FORMAT, myParams[UgsConstants.SERVER_URL])
         val body = JSONObject()
-        // TODO: Try parse?
+
+        val buildType = build.buildType
+        if (buildType != null) { // just a precaution, I think it will only happen if a build configuration gets deleted during the build
+            val unresolvedParams = buildType.getBuildFeaturesOfType(CommitStatusPublisherFeature.TYPE).stream()
+                .filter { f: SBuildFeatureDescriptor -> f.id == buildFeatureId }
+                .map { f: SBuildFeatureDescriptor -> f.parameters }.findFirst().orElse(emptyMap())
+            val value = unresolvedParams["ugsBadgeName"]
+
+            val serverUrlUnformatted = unresolvedParams[UgsConstants.SERVER_URL]
+            val projectUnformatted = unresolvedParams[UgsConstants.PROJECT]
+            val badgeNameUnformatted = unresolvedParams[UgsConstants.BADGE_NAME]
+
+            build.buildOwnParameters
+            /// use it here
+        }
 
         // This will return the changelist number if using feature branches (e.g. "main|123" -> 123)
         // or only the changelist number if not using feature branches ("123" -> 123)
